@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2019-08-09 10:09
+-- Generated: 2019-08-12 20:04
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `Testpro`.`device` (
   `user_id` VARCHAR(36) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '外键。参照表为user。引用user表ID。',
   `create` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间。类型为datetime,精确到时分秒。',
   `update` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间。类型为datetime,精确到时分秒。',
+  `circumstance` VARCHAR(30) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '设备的使用场景。',
   PRIMARY KEY (`id`, `user_id`),
   INDEX `user_id_to_device1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `user_id_to_device1`
@@ -297,6 +298,23 @@ CREATE TABLE IF NOT EXISTS `Testpro`.`closed_account` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COMMENT = '注销表。记录注销用户的用户ID。注销逻辑：一个用户注销，那么他的ID就记录在这。同时相关数据被删除或者保留。但是用户可以使用同一个手机号再次注册。再次注册的话即是往user表里添加数据，同时从closed_account表中删除该用户的过去的ID。';
+
+CREATE TABLE IF NOT EXISTS `Testpro`.`circumstances` (
+  `id` VARCHAR(36) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '主键。',
+  `circumstance` VARCHAR(30) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '记录用户设备的应用场景。',
+  `create` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间。类型为datetime,精确到时分秒。',
+  `update` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间。类型为datetime,精确到时分秒。',
+  `user_id` VARCHAR(36) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL,
+  PRIMARY KEY (`id`, `user_id`),
+  INDEX `user_id_to_circumstances1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `user_id_to_circumstances1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `Testpro`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COMMENT = '使用场景表。记录用户的使用场景。与用户表是一对一的关系。';
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
