@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2019-08-26 14:36
+-- Generated: 2019-08-27 09:06
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -16,12 +16,12 @@ CREATE TABLE IF NOT EXISTS `Testpro`.`anju_user` (
   `countname` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '账户。记录账号名，长度限制在15个字符。不唯一。',
   `password` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '用户密码，限制长度在15个字符。不唯一。前端需要对密码进行密码强度判断。具体强度规则暂未定下。',
   `phone` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT '电话号码。长度限制在15个字符。唯一。',
-  `email` VARCHAR(20) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT 'null' COMMENT '用户邮件地址。长度限制在20个字符。唯一。',
+  `email` VARCHAR(20) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT NULL COMMENT '用户邮件地址。长度限制在20个字符。唯一。',
   `create` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间。记录用户账户创建时间。类型为datetime，精确到时分秒。',
   `update` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间。记录用户账号资料更新时间，类型为datetime，精确到时分秒。',
   `sex` VARCHAR(2) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT '未知' COMMENT '用户性别（可选信息）。可选字符‘男’，‘女’，‘未知’。',
   `birth` DATE NULL DEFAULT '1990-1-01' COMMENT '用户生日（可选数据），类型是date，精确到年月日。',
-  `circumstances` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT '家用 室内' COMMENT '添加用户使用场景字段。限制长度为15个字符。',
+  `useplace` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT '家用 室内' COMMENT '添加用户使用场景字段。限制长度为15个字符。',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE)
 ENGINE = InnoDB
@@ -234,41 +234,24 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COMMENT = '设备共享表。存储设备被共享时的信息表。与好友是多对一的关系，与用户是多对一的关系。';
 
-CREATE TABLE IF NOT EXISTS `Testpro`.`signin` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键。类型为自增。',
-  `create` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '登陆时间。类型为datetime,精确到时分秒。',
-  `update` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间。类型为datetime,精确到时分秒。',
-  `terminal_id` INT(11) NOT NULL,
-  `anju_user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `terminal_id`, `anju_user_id`),
-  INDEX `terminal_id_to_signin1_idx` (`terminal_id` ASC) VISIBLE,
-  INDEX `anju_user_id_to_signin1_idx` (`anju_user_id` ASC) VISIBLE,
-  CONSTRAINT `terminal_id_to_signin1`
-    FOREIGN KEY (`terminal_id`)
-    REFERENCES `Testpro`.`terminal` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `anju_user_id_to_signin1`
-    FOREIGN KEY (`anju_user_id`)
-    REFERENCES `Testpro`.`anju_user` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_estonian_ci
-COMMENT = '登录日志表。记录用户的登录动作。与用户表是多对一的关系。与终端表terminal是多对一的关系。';
-
 CREATE TABLE IF NOT EXISTS `Testpro`.`operationlog` (
   `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键。类型为自增。',
   `log` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT NULL COMMENT '操作日志文本存档。存储为VARCHAR。最大为10个字符。',
   `create` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间。',
   `update` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间。',
   `anju_user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `anju_user_id`),
+  `terminal_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`, `anju_user_id`, `terminal_id`),
   INDEX `anju_user_id_to_operationlog1_idx` (`anju_user_id` ASC) VISIBLE,
+  INDEX `terminal_id_to_operationlog1_idx` (`terminal_id` ASC) VISIBLE,
   CONSTRAINT `anju_user_id_to_operationlog1`
     FOREIGN KEY (`anju_user_id`)
     REFERENCES `Testpro`.`anju_user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `terminal_id_to_operationlog1`
+    FOREIGN KEY (`terminal_id`)
+    REFERENCES `Testpro`.`terminal` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
