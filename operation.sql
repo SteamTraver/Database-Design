@@ -1,6 +1,5 @@
 -- SELECT * FROM anju_user;
--- insert into testpro.terminal(id,name,mac,ip)
--- values(default,'OPPW','48:01:c5:17:c4:69','192.168.177.116');
+
 
 -- delete from user_has_terminal;
 -- insert into user_has_terminal
@@ -50,9 +49,12 @@
 --     values(default,NEW.id,);
 -- end;
 -- select * from anju_user;
--- insert into terminal
--- values(default,'GALAXY S10 plus','44:00:d1:17:c5:63','192.168.49.169','15107949156','N');
+-- use testpro;
 
+
+-- select * from terminal;
+
+-- select * from user_has_terminal;
 -- insert into user_has_terminal
 -- values(default,4,2,default,default,default);
 
@@ -130,15 +132,13 @@
 -- -- delete from terminal;
 -- select * from user_has_terminal;
 
--- 设置触发器,当用户添加设备时，中间表自动更新。
 
--- create trigger AFTER_terminal_INSERT after insert on terminal 
--- for each row
--- 	insert into user_has_terminal
---     values(default,new.id,
---     (select anju_user.id from anju_user where anju_user.phone=new.phone),
---     default,default,default);
+-- insert into terminal
+-- values(default,'Oneplus 7T ProS','44:00:d1:17:c5:63','192.168.49.169','15107949156','N');
+-- delete from terminal where terminal.phone='15107949156' and terminal.using='N';
+
 -- select * from terminal;
+
 
 -- insert into terminal
 -- values(default,'Firefox','44:00:d1:17:c6:63','192.168.49.168','18279430191','N');
@@ -156,12 +156,73 @@
 -- update terminal set phone='15107949156' where id != 12;
 
 -- insert into terminal
--- values(default,'Oneplus 7','42:01:d2:17:c4:63','192.168.137.118','18279430199','Y');
+-- values(default,'PCGM001','C0:2E:25:D9:CE:23','192.168.137.118','15107949156','N');
 
 -- update user_has_terminal set status='已绑定' where status='解绑';
 
+
+
+-- select * from operationlog;
+
+-- select * from operationlog;
+
+-- select check('C0:2E:25:D9:CE:23'=(select mac from terminal where phone='15107949156'));
+
+-- update terminal set terminal.using='Y' where mac = '42:01:d2:17:c4:63';
+-- select * from user_has_terminal;
+-- select * from terminal where terminal.mac='A8:9C:ED:B6:AE:9A' and terminal.phone='18379457511';
+
 -- select * from terminal;
+-- 用户注销之后的操作，terminal表删除元组，user_has_terminal也要删除元组 
+-- use testpro;
+-- select * from anju_user;
 
--- select * from operationlog;
+-- 编写触发器，当用户注销的时候，删除终端、user_has_terminal、操作日志、
+-- 好友表的元组，并且把注销的账户添加到closed_account表内。
 
--- select * from operationlog;
+-- DELIMITER $$
+-- create trigger AFTER_anju_user_DELETE 
+-- after delete on anju_user
+-- for each row
+-- BEGIN
+--     insert into closed_account values(default,default,default,old.phone,old.id);
+--     delete from operationlog where operationlog.anju_user_id = old.id;
+--     delete from terminal where terminal.phone=old.phone;
+--     delete from user_has_terminal where user_has_terminal.anju_user_id = old.id;
+--     delete from friend where friend.anju_user_id = old.id or friend.anju_user_id1 = old.id;
+-- END$$
+
+-- drop trigger AFTER_terminal_INSERT ;
+
+-- insert into terminal
+-- values(default,'Oneplus 7T','48:01:c5:17:c4:69','18279430191','192.168.177.116',default);
+
+-- select * from user_has_terminal;
+-- delete from terminal;
+
+-- 设置触发器,当用户添加设备时，中间表自动更新。
+
+-- create trigger AFTER_terminal_INSERT after insert on terminal 
+-- for each row
+-- 	insert into user_has_terminal(anju_user_id,terminal_id)
+--     values(
+-- 			(select anju_user.id from anju_user where anju_user.phone=new.phone),new.id
+--     );
+
+-- DELIMITER $$
+-- create trigger BEFORE_terminal_INSERT 
+
+-- delete  from anju_user where phone='18279430191';
+-- use testpro;
+-- select * from user_has_terminal;
+-- select * from anju_user;
+select * from terminal;
+
+
+
+
+
+
+
+
+
