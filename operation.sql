@@ -160,8 +160,6 @@
 
 -- update user_has_terminal set status='已绑定' where status='解绑';
 
-
-
 -- select * from operationlog;
 
 -- select * from operationlog;
@@ -185,10 +183,9 @@
 -- after delete on anju_user
 -- for each row
 -- BEGIN
---     insert into closed_account values(default,default,default,old.phone,old.id);
 --     delete from operationlog where operationlog.anju_user_id = old.id;
---     delete from terminal where terminal.phone=old.phone;
 --     delete from user_has_terminal where user_has_terminal.anju_user_id = old.id;
+--     delete from terminal where terminal.phone=old.phone;
 --     delete from friend where friend.anju_user_id = old.id or friend.anju_user_id1 = old.id;
 -- END$$
 
