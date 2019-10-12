@@ -41,6 +41,7 @@
 
 ``` sql
 {
+    -- 当用户注销的时候，这个触发器负责删除该用户的终端、操作日志、用户-终端、好友表这几个表的数据。
     drop trigger if exists AFTER_anju_user_DELETE;
     DELIMITER $$
     create trigger AFTER_anju_user_DELETE after delete
