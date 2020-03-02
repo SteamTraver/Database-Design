@@ -1,2 +1,2 @@
-# Database-Desing
-This is a repository just for the model file can be versioned.
+# Database-Design
+This is a repository just for the database design model file can be versioned.
